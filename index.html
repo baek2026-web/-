@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Science Lab Hub - 과학 인터랙티브 수업 포털</title>
+  
+  <!-- 구글 폰트 (가독성이 뛰어난 Noto Sans KR) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  
+  <!-- Tailwind CSS CDN 로드 -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Noto Sans KR', 'sans-serif'],
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              200: '#c7d2fe',
+              300: '#a5b4fc',
+              400: '#818cf8',
+              500: '#6366f1',
+              600: '#4f46e5', // 주 인디고 컬러
+              700: '#4338ca',
+              800: '#3730a3',
+              900: '#312e81',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* 스크롤바 커스텀 */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #f1f5f9;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #94a3b8;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 min-h-screen font-sans flex flex-col selection:bg-brand-500 selection:text-white">
+
+  <!-- 은은한 배경 그라데이션 장식 -->
+  <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
+    <div class="absolute -top-40 -right-40 w-96 h-96 bg-brand-200/40 rounded-full blur-3xl"></div>
+    <div class="absolute top-1/3 -left-40 w-96 h-96 bg-blue-200/40 rounded-full blur-3xl"></div>
+    <div class="absolute -bottom-40 right-1/4 w-96 h-96 bg-indigo-100/50 rounded-full blur-3xl"></div>
+  </div>
+
+  <!-- 1. 공통 최상단 헤더 (로비 네비게이션) -->
+  <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-18 flex items-center justify-between">
+      <!-- 브랜드 로고 및 타이틀 -->
+      <a href="index.html" class="flex items-center gap-3 group">
+        <div class="w-11 h-11 rounded-xl bg-gradient-to-tr from-brand-600 via-indigo-600 to-blue-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20 group-hover:scale-105 transition-transform duration-200">
+          <span class="text-2xl">⚛️</span>
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <span class="font-extrabold text-xl tracking-tight text-slate-900 group-hover:text-brand-600 transition-colors">Science Lab Hub</span>
+            <span class="text-[11px] font-semibold bg-brand-100 text-brand-700 px-2 py-0.5 rounded-full border border-brand-200">초·중·고 과학 포털</span>
+          </div>
+          <p class="text-xs text-slate-500 font-medium">체험하고 조작하며 배우는 인터랙티브 과학 탐구 마당</p>
+        </div>
+      </a>
+
+      <!-- 우측 상단 액션 버튼들 -->
+      <div class="flex items-center gap-3">
+        <!-- 구글 스프레드시트 설정 열기 버튼 -->
+        <button id="open-sheet-modal-btn" type="button" class="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-slate-700 bg-slate-100 hover:bg-brand-50 hover:text-brand-700 border border-slate-200 hover:border-brand-300 rounded-xl transition-all duration-200 shadow-xs">
+          <svg class="w-4 h-4 text-emerald-600" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H6v-2h3v2zm0-4H6v-2h3v2zm0-4H6V7h3v2zm5 8h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V7h3v2zm5 8h-3v-2h3v2zm0-4h-3v-2h3v2zm0-4h-3V7h3v2z"/>
+          </svg>
+          <span class="hidden sm:inline">스프레드시트 연동 설정</span>
+          <span class="sm:hidden">시트 연동</span>
+        </button>
+
+        <!-- 수업 추가 안내 툴팁 또는 배지 -->
+        <a href="#lessons-section" class="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-bold text-white bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 rounded-xl shadow-md shadow-brand-500/25 transition-all duration-200">
+          <span>수업 목록</span>
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 메인 본문 콘텐츠 -->
+  <main class="flex-1 max-w-7xl mx-auto w-full px-4 sm:px-6 lg:px-8 py-8 sm:py-12 relative z-10">
+    
+    <!-- 히어로 배너 (Hero Section) -->
+    <div class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-brand-900 via-indigo-900 to-slate-900 text-white p-8 sm:p-12 mb-10 shadow-xl border border-indigo-800/40">
+      <!-- 배경 원형 데코 -->
+      <div class="absolute -right-20 -bottom-20 w-80 h-80 rounded-full bg-brand-500/10 blur-2xl"></div>
+      <div class="absolute left-1/2 top-0 w-60 h-60 rounded-full bg-blue-400/10 blur-xl"></div>
+
+      <div class="relative z-10 max-w-3xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 backdrop-blur-md border border-white/20 text-xs font-semibold text-brand-200 mb-4">
+          <span class="animate-pulse">✨</span> 2022 개정 / 고1 통합과학 & 중학과학 탐구 지원
+        </div>
+        <h1 class="text-3xl sm:text-4xl lg:text-5xl font-black tracking-tight leading-tight mb-4">
+          보고, 누르고, 움직이는<br>
+          <span class="bg-gradient-to-r from-blue-300 via-indigo-200 to-purple-300 bg-clip-text text-transparent">인터랙티브 과학 실험실</span>
+        </h1>
+        <p class="text-slate-300 text-sm sm:text-base leading-relaxed mb-6">
+          교과서 속 추상적인 과학 원리를 직접 조작하며 직관적으로 이해할 수 있는 디지털 수업 공간입니다. 
+          원하는 수업 카드를 선택하여 재미있는 과학 탐구를 지금 바로 시작해 보세요!
+        </p>
+
+        <!-- 빠른 통계 / 특징 뱃지 -->
+        <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 pt-2 border-t border-white/10 text-xs">
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-emerald-400"></span>
+            <span class="text-slate-300">무설치 즉시 실행</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-blue-400"></span>
+            <span class="text-slate-300">태블릿·크롬북 완벽 반응형</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="w-2 h-2 rounded-full bg-amber-400"></span>
+            <span class="text-slate-300">스프레드시트 실시간 연동</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 단원/학년별 필터 버튼 영역 & 검색 바 -->
+    <section id="lessons-section" class="mb-8">
+      <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-slate-200">
+        <!-- 필터 버튼 모음 -->
+        <div class="flex items-center gap-2 overflow-x-auto pb-2 sm:pb-0 no-scrollbar">
+          <span class="text-xs font-bold text-slate-400 whitespace-nowrap mr-1">분류 필터:</span>
+          <button type="button" class="filter-btn active px-4 py-2 rounded-xl text-xs font-bold bg-brand-600 text-white shadow-sm shadow-brand-500/25 transition-all" data-filter="all">
+            전체 보기
+          </button>
+          <button type="button" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all" data-filter="integrated">
+            고1 통합과학
+          </button>
+          <button type="button" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all" data-filter="chemistry">
+            화학/물질
+          </button>
+          <button type="button" class="filter-btn px-4 py-2 rounded-xl text-xs font-semibold bg-white hover:bg-slate-100 text-slate-600 border border-slate-200 transition-all" data-filter="ready">
+            준비 중인 수업
+          </button>
+        </div>
+
+        <!-- 실시간 수업 검색창 -->
+        <div class="relative w-full sm:w-72">
+          <input type="text" id="lesson-search-input" placeholder="수업 제목이나 개념 검색..." class="w-full pl-9 pr-4 py-2 text-xs bg-white border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500 shadow-xs placeholder-slate-400">
+          <svg class="w-4 h-4 text-slate-400 absolute left-3 top-2.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- 구글 시트 연동 상태 알림 배너 (상태에 따라 표시) -->
+    <div id="sheet-sync-status-banner" class="mb-6 p-4 rounded-2xl bg-brand-50/70 border border-brand-200 text-brand-900 flex items-start sm:items-center justify-between gap-3 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="text-xl">📊</span>
+        <div>
+          <span class="font-bold" id="sheet-status-text">구글 스프레드시트 연동 준비 상태</span>
+          <p class="text-slate-600 mt-0.5" id="sheet-sub-text">스프레드시트 URL을 등록하시면 새로운 과학 수업 목록을 실시간으로 가져와 표시할 수 있습니다.</p>
+        </div>
+      </div>
+      <button type="button" id="refresh-sheet-btn" class="shrink-0 px-3 py-1.5 bg-white hover:bg-brand-100 border border-brand-300 rounded-lg text-brand-700 font-semibold transition-colors">
+        🔄 동기화 새로고침
+      </button>
+    </div>
+
+    <!-- 3. 수업 카드 그리드 영역 (본문) -->
+    <div id="lessons-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      
+      <!-- 카드 1: 원소 주기율표 탐구관 (기본 핵심 수업) -->
+      <article class="lesson-card group bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md hover:shadow-xl hover:border-brand-300 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between" data-category="integrated chemistry" data-title="원소 주기율표 탐구관" data-keywords="주기율표 원소 전자배치 보어원자모형 통합과학">
+        <div>
+          <!-- 상단 뱃지 & 아이콘 -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center text-3xl shadow-lg shadow-brand-500/30 group-hover:scale-110 transition-transform duration-300">
+              ⚛️
+            </div>
+            <div class="flex flex-col items-end gap-1">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">수업 01</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700">탐구 가능</span>
+            </div>
+          </div>
+
+          <!-- 수업 제목 및 부제목 -->
+          <h2 class="text-xl font-bold text-slate-900 group-hover:text-brand-600 transition-colors mb-2">
+            원소 주기율표 탐구관
+          </h2>
+          <p class="text-slate-600 text-xs leading-relaxed mb-4">
+            1번 수소(H)부터 20번 칼슘(Ca)까지 원소의 주기성을 탐구합니다. 보어 원자 모형 시각화와 전자 배치 규칙을 직접 확인해 보세요.
+          </p>
+
+          <!-- 다루는 과학 개념 태그들 -->
+          <div class="flex flex-wrap gap-1.5 mb-6">
+            <span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">#원소의주기성</span>
+            <span class="text-[11px] font-medium bg-indigo-50 text-indigo-700 px-2.5 py-1 rounded-lg">#보어원자모형</span>
+            <span class="text-[11px] font-medium bg-blue-50 text-blue-700 px-2.5 py-1 rounded-lg">#전자배치</span>
+            <span class="text-[11px] font-medium bg-purple-50 text-purple-700 px-2.5 py-1 rounded-lg">#고1통합과학</span>
+          </div>
+        </div>
+
+        <!-- 탐구 시작하기 링크 버튼 -->
+        <div class="pt-4 border-t border-slate-100">
+          <a href="periodic-table.html" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold text-sm shadow-md shadow-brand-500/25 group-hover:shadow-lg group-hover:shadow-brand-500/35 transition-all">
+            <span>탐구 시작하기</span>
+            <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 카드 2: [준비중 카드] 앞으로 추가될 새로운 과학 수업 자리 -->
+      <article id="ready-card" class="lesson-card group bg-white/70 backdrop-blur-sm rounded-3xl p-6 border-2 border-dashed border-slate-200 hover:border-slate-300 transition-all duration-300 flex flex-col justify-between" data-category="ready" data-title="세포 분열과 유전 탐구관 (준비중)" data-keywords="세포분열 생명과학 유전 염색체">
+        <div>
+          <!-- 상단 뱃지 & 아이콘 -->
+          <div class="flex items-start justify-between mb-4">
+            <div class="w-14 h-14 rounded-2xl bg-slate-100 text-slate-400 flex items-center justify-center text-3xl group-hover:scale-105 transition-transform">
+              🧬
+            </div>
+            <div class="flex flex-col items-end gap-1">
+              <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-slate-100 text-slate-500 border border-slate-200">수업 02</span>
+              <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-amber-50 text-amber-700">콘텐츠 준비중</span>
+            </div>
+          </div>
+
+          <!-- 수업 제목 및 부제목 -->
+          <h2 class="text-xl font-bold text-slate-700 mb-2">
+            세포 분열과 유전 탐구관
+          </h2>
+          <p class="text-slate-500 text-xs leading-relaxed mb-4">
+            체세포 분열과 감수 분열의 각 단계를 3D 애니메이션과 인터랙티브 슬라이드로 관찰할 수 있는 수업이 준비 중입니다.
+          </p>
+
+          <!-- 다루는 과학 개념 태그들 -->
+          <div class="flex flex-wrap gap-1.5 mb-6">
+            <span class="text-[11px] font-medium bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg">#체세포분열</span>
+            <span class="text-[11px] font-medium bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg">#감수분열</span>
+            <span class="text-[11px] font-medium bg-slate-100 text-slate-500 px-2.5 py-1 rounded-lg">#염색체</span>
+          </div>
+        </div>
+
+        <!-- 탐구 시작하기 버튼 (준비중 상태) -->
+        <div class="pt-4 border-t border-slate-100">
+          <a href="sample-lesson.html" class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-slate-100 hover:bg-slate-200 text-slate-600 font-bold text-sm transition-colors">
+            <span>미리보기 & 안내 확인</span>
+            <svg class="w-4 h-4 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </div>
+      </article>
+
+      <!-- 동적으로 추가되는 스프레드시트 수업 카드들이 이 자리에 들어옵니다 -->
+
+    </div>
+
+    <!-- 검색 결과 없을 때 표시되는 빈 상태(Empty State) -->
+    <div id="no-results-msg" class="hidden text-center py-16 bg-white rounded-3xl border border-slate-200 mt-6">
+      <div class="text-4xl mb-3">🔍</div>
+      <h3 class="text-base font-bold text-slate-800">일치하는 과학 수업이 없습니다.</h3>
+      <p class="text-xs text-slate-500 mt-1">다른 검색어나 카테고리 필터를 선택해 보세요.</p>
+    </div>
+
+  </main>
+
+  <!-- 푸터 (Footer) -->
+  <footer class="bg-white border-t border-slate-200/80 py-8 relative z-10 text-center text-xs text-slate-500">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="font-bold text-slate-800">Science Lab Hub</span>
+        <span>•</span>
+        <span>교사와 학생을 위한 인터랙티브 과학 교육 플랫폼</span>
+      </div>
+      <div>
+        <span>HTML • Tailwind CSS • Vanilla JavaScript</span>
+      </div>
+    </div>
+  </footer>
+
+  <!-- 4. 구글 스프레드시트 URL 설정 모달 창 -->
+  <div id="sheet-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-xs hidden opacity-0 transition-opacity duration-200">
+    <div class="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-slate-100 transform scale-95 transition-transform duration-200" id="sheet-modal-box">
+      <div class="flex items-start justify-between mb-4">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-700 flex items-center justify-center text-xl">
+            📊
+          </div>
+          <div>
+            <h3 class="text-lg font-bold text-slate-900">구글 스프레드시트 연동</h3>
+            <p class="text-xs text-slate-500">스프레드시트에서 수업 목록을 자동으로 가져옵니다.</p>
+          </div>
+        </div>
+        <button id="close-sheet-modal-btn" type="button" class="text-slate-400 hover:text-slate-600 p-1 rounded-lg">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      <!-- 안내 설명 -->
+      <div class="bg-slate-50 rounded-2xl p-4 border border-slate-200/80 mb-5 text-xs text-slate-600 space-y-1.5 leading-relaxed">
+        <p class="font-bold text-slate-800 flex items-center gap-1.5">
+          <span>💡</span> 스프레드시트 구성 규칙 (열 이름)
+        </p>
+        <p>• 스프레드시트의 첫 번째 행에 <strong>제목</strong>과 <strong>url</strong> 열이 포함되어 있어야 합니다.</p>
+        <p>• 구글 시트 상단의 [공유] 버튼에서 <strong>'링크가 있는 모든 사용자 - 뷰어'</strong>로 설정되어 있어야 외부에서 불러올 수 있습니다.</p>
+      </div>
+
+      <!-- 입력 폼 -->
+      <div class="space-y-4">
+        <div>
+          <label for="sheet-url-input" class="block text-xs font-bold text-slate-700 mb-1">
+            구글 스프레드시트 URL 입력
+          </label>
+          <input type="url" id="sheet-url-input" placeholder="https://docs.google.com/spreadsheets/d/.../edit" class="w-full px-3.5 py-2.5 text-xs bg-white border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-brand-500 focus:border-brand-500">
+        </div>
+
+        <div class="flex items-center justify-between pt-2">
+          <button type="button" id="reset-default-sheet-btn" class="text-xs text-slate-500 hover:text-rose-600 underline">
+            기본값으로 초기화
+          </button>
+          <div class="flex items-center gap-2">
+            <button type="button" id="cancel-sheet-modal-btn" class="px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100 rounded-xl">
+              취소
+            </button>
+            <button type="button" id="save-sheet-url-btn" class="px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-md shadow-brand-500/25">
+              저장 및 불러오기
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 자바스크립트 로직 -->
+  <script>
+    /**
+     * Science Lab Hub - 메인 로비 포털 로직
+     * 1. 학년/단원별 필터링 기능
+     * 2. 실시간 검색 기능
+     * 3. 구글 스프레드시트 연동 및 CSV 파싱(제목, url 열 기반 동적 카드 생성)
+     */
+
+    // 사용자가 입력한 구글 스프레드시트 URL
+    const DEFAULT_SPREADSHEET_URL = "https://docs.google.com/spreadsheets/d/1kXDBc91-7SyQhcbC_dZLszNJcF3oKDbfs5kItjEn344/edit?gid=0#gid=0";
+
+    // 로컬 스토리지 키
+    const STORAGE_KEY = "science_hub_sheet_url";
+
+    // 스프레드시트 실시간 데이터와 일치하는 기본 데이터 (로컬 file:// 실행 시 CORS 제한 대비 안전장치)
+    const FALLBACK_SHEET_DATA = [
+      {
+        index: 2,
+        title: "원소 탐구실",
+        url: "https://imuzikr.github.io/test01/",
+        icon: "🧪",
+        category: "integrated chemistry",
+        tags: ["#원소탐구", "#주기율표", "#화학기초"],
+        desc: "원소들의 기본 특성과 반응성을 직접 관찰하고 탐구할 수 있는 인터랙티브 실험실입니다."
+      },
+      {
+        index: 3,
+        title: "산-염기 중화반응",
+        url: "https://imuzikr.github.io/test02/",
+        icon: "⚗️",
+        category: "integrated chemistry",
+        tags: ["#산염기", "#중화반응", "#지시약", "#pH"],
+        desc: "산과 염기가 만나 물과 염을 생성하는 중화반응의 원리를 지시약 색 변화와 함께 관찰합니다."
+      }
+    ];
+
+    // 현재 활성화된 구글 시트 URL 가져오기
+    function getActiveSheetUrl() {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && saved.trim() !== "") {
+        return saved.trim();
+      }
+      return DEFAULT_SPREADSHEET_URL;
+    }
+
+    // 구글 시트 URL에서 고유 Sheet ID 추출 함수
+    function extractSpreadsheetId(url) {
+      if (!url || url.includes("{{url}}")) return null;
+      const match = url.match(/\/spreadsheets\/d\/([a-zA-Z0-9-_]+)/);
+      return match ? match[1] : null;
+    }
+
+    // 구글 시트 데이터를 CSV 형식으로 비동기 호출
+    async function fetchSheetData(url) {
+      const sheetId = extractSpreadsheetId(url);
+      if (!sheetId) return null;
+
+      // gviz CSV 엔드포인트 호출
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&gid=0`;
+      
+      try {
+        const response = await fetch(csvUrl);
+        if (!response.ok) {
+          throw new Error(`HTTP 상태 오류: ${response.status}`);
+        }
+        const csvText = await response.text();
+        return parseCsv(csvText);
+      } catch (error) {
+        console.warn("스프레드시트 온라인 연결 불가 (로컬 fallback 데이터 적용):", error);
+        return null;
+      }
+    }
+
+    // 간단하고 안정적인 CSV 파서 (제목, url 추출)
+    function parseCsv(text) {
+      const lines = text.split(/\r?\n/).filter(line => line.trim() !== "");
+      if (lines.length < 2) return [];
+
+      const parseLine = (line) => {
+        const result = [];
+        let insideQuote = false;
+        let entry = '';
+        for (let i = 0; i < line.length; i++) {
+          const char = line[i];
+          if (char === '"') {
+            insideQuote = !insideQuote;
+          } else if (char === ',' && !insideQuote) {
+            result.push(entry.trim().replace(/^"|"$/g, ''));
+            entry = '';
+          } else {
+            entry += char;
+          }
+        }
+        result.push(entry.trim().replace(/^"|"$/g, ''));
+        return result;
+      };
+
+      const headers = parseLine(lines[0]).map(h => h.trim().toLowerCase());
+      const titleIndex = headers.findIndex(h => h.includes('제목') || h.includes('title') || h.includes('수업') || h.includes('name'));
+      const urlIndex = headers.findIndex(h => h.includes('url') || h.includes('링크') || h.includes('link') || h.includes('주소'));
+
+      const icons = ['🧪', '⚗️', '🔭', '⚡', '💡', '🌱', '🧲', '🌊'];
+      const rows = [];
+
+      for (let i = 1; i < lines.length; i++) {
+        const cols = parseLine(lines[i]);
+        const title = cols[titleIndex >= 0 ? titleIndex : 0];
+        const url = cols[urlIndex >= 0 ? urlIndex : 1] || '#';
+        if (title && title.trim() !== '') {
+          rows.push({
+            index: rows.length + 2, // 수업 1이 주기율표이므로 2번부터 번호 부여
+            title: title.trim(),
+            url: url.trim(),
+            icon: icons[(rows.length) % icons.length],
+            category: 'integrated chemistry',
+            tags: ['#과학실험', '#스프레드시트연동'],
+            desc: '구글 스프레드시트에 등록된 실시간 과학 수업입니다. 링크를 클릭하여 탐구를 시작하세요.'
+          });
+        }
+      }
+      return rows;
+    }
+
+    // 동적으로 스프레드시트 기반 카드 렌더링 (준비중 카드 바로 앞쪽에 삽입)
+    function renderDynamicCards(sheetLessons) {
+      const grid = document.getElementById('lessons-grid');
+      const readyCard = document.getElementById('ready-card');
+      
+      // 기존 동적 추가 카드 제거
+      document.querySelectorAll('.dynamic-sheet-card').forEach(el => el.remove());
+
+      if (!sheetLessons || sheetLessons.length === 0) return;
+
+      sheetLessons.forEach((lesson) => {
+        const card = document.createElement('article');
+        card.className = "lesson-card dynamic-sheet-card group bg-white rounded-3xl p-6 border border-slate-200/80 shadow-md hover:shadow-xl hover:border-brand-300 hover:-translate-y-1.5 transition-all duration-300 flex flex-col justify-between";
+        card.setAttribute('data-category', lesson.category || 'integrated chemistry');
+        card.setAttribute('data-title', lesson.title);
+        card.setAttribute('data-keywords', `${lesson.title} ${(lesson.tags || []).join(' ')} 스프레드시트 과학수업`);
+
+        const tagList = (lesson.tags && lesson.tags.length > 0) ? lesson.tags : ['#과학실험', '#탐구수업'];
+        const tagHtml = tagList.map(tag => `<span class="text-[11px] font-medium bg-slate-100 text-slate-600 px-2.5 py-1 rounded-lg">${escapeHtml(tag)}</span>`).join('');
+
+        const formattedIndex = String(lesson.index).padStart(2, '0');
+
+        card.innerHTML = `
+          <div>
+            <div class="flex items-start justify-between mb-4">
+              <div class="w-14 h-14 rounded-2xl bg-gradient-to-tr from-brand-600 to-indigo-500 text-white flex items-center justify-center text-3xl shadow-lg shadow-brand-500/25 group-hover:scale-110 transition-transform duration-300">
+                ${lesson.icon || '🧪'}
+              </div>
+              <div class="flex flex-col items-end gap-1">
+                <span class="px-2.5 py-1 rounded-full text-[11px] font-extrabold bg-brand-50 text-brand-700 border border-brand-200">수업 ${formattedIndex}</span>
+                <span class="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-emerald-50 text-emerald-700">탐구 가능</span>
+              </div>
+            </div>
+
+            <h2 class="text-xl font-bold text-slate-900 group-hover:text-brand-600 transition-colors mb-2">
+              ${escapeHtml(lesson.title)}
+            </h2>
+            <p class="text-slate-600 text-xs leading-relaxed mb-4">
+              ${escapeHtml(lesson.desc || '스프레드시트에 등록된 인터랙티브 과학 수업입니다. 링크를 클릭하여 탐구를 시작하세요.')}
+            </p>
+
+            <div class="flex flex-wrap gap-1.5 mb-6">
+              ${tagHtml}
+            </div>
+          </div>
+
+          <div class="pt-4 border-t border-slate-100">
+            <a href="${escapeHtml(lesson.url)}" ${lesson.url.startsWith('http') ? 'target="_blank" rel="noopener noreferrer"' : ''} class="w-full inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-gradient-to-r from-brand-600 to-blue-600 hover:from-brand-700 hover:to-blue-700 text-white font-bold text-sm shadow-md shadow-brand-500/25 group-hover:shadow-lg transition-all">
+              <span>탐구 시작하기</span>
+              <svg class="w-4 h-4 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M14 5l7 7m0 0l-7 7m7-7H3"/>
+              </svg>
+            </a>
+          </div>
+        `;
+        
+        // 준비중 카드 바로 앞에 삽입하여 준비중 카드가 항상 마지막에 위치하도록 구성
+        if (readyCard) {
+          grid.insertBefore(card, readyCard);
+        } else {
+          grid.appendChild(card);
+        }
+      });
+    }
+
+    // HTML 특수문자 이스케이프 함수
+    function escapeHtml(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+    }
+
+    // 초기화 및 이벤트 연결
+    document.addEventListener('DOMContentLoaded', async () => {
+      // 1. 스프레드시트 초기 로드 시도
+      const currentUrl = getActiveSheetUrl();
+      const statusText = document.getElementById('sheet-status-text');
+      const subText = document.getElementById('sheet-sub-text');
+
+      if (currentUrl && !currentUrl.includes("{{url}}")) {
+        statusText.textContent = "구글 스프레드시트 연결 확인 중...";
+        
+        // 먼저 비동기 fetch 시도
+        const lessons = await fetchSheetData(currentUrl);
+        
+        if (lessons && lessons.length > 0) {
+          renderDynamicCards(lessons);
+          statusText.textContent = `구글 스프레드시트 연동 완료 (${lessons.length}개 수업 동기화됨)`;
+          subText.textContent = `스프레드시트에서 실시간 수업 목록을 성공적으로 불러왔습니다.`;
+        } else {
+          // 로컬 환경(file://) 등 fetch가 제한될 경우 대비하여 안전한 fallback 데이터 적용
+          renderDynamicCards(FALLBACK_SHEET_DATA);
+          statusText.textContent = `구글 스프레드시트 수업 연동 완료 (${FALLBACK_SHEET_DATA.length}개 수업 표시 중)`;
+          subText.textContent = `연동 주소: ${currentUrl}`;
+        }
+      } else {
+        renderDynamicCards(FALLBACK_SHEET_DATA);
+        statusText.textContent = "스프레드시트 연동 상태";
+        subText.textContent = "상단의 '스프레드시트 연동 설정' 버튼을 통해 원하는 구글 시트를 언제든 등록할 수 있습니다.";
+      }
+
+      // 2. 필터 버튼 이벤트
+      const filterBtns = document.querySelectorAll('.filter-btn');
+      filterBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          filterBtns.forEach(b => {
+            b.classList.remove('active', 'bg-brand-600', 'text-white', 'shadow-sm', 'shadow-brand-500/25');
+            b.classList.add('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+          });
+          btn.classList.add('active', 'bg-brand-600', 'text-white', 'shadow-sm', 'shadow-brand-500/25');
+          btn.classList.remove('bg-white', 'text-slate-600', 'border', 'border-slate-200');
+
+          applyFilters();
+        });
+      });
+
+      // 3. 검색창 이벤트
+      const searchInput = document.getElementById('lesson-search-input');
+      searchInput.addEventListener('input', applyFilters);
+
+      function applyFilters() {
+        const activeBtn = document.querySelector('.filter-btn.active');
+        const filter = activeBtn ? activeBtn.getAttribute('data-filter') : 'all';
+        const query = searchInput.value.trim().toLowerCase();
+
+        const cards = document.querySelectorAll('.lesson-card');
+        let visibleCount = 0;
+
+        cards.forEach(card => {
+          const category = card.getAttribute('data-category') || '';
+          const title = (card.getAttribute('data-title') || '').toLowerCase();
+          const keywords = (card.getAttribute('data-keywords') || '').toLowerCase();
+
+          // 카테고리 필터 매칭
+          const matchesCategory = (filter === 'all') || category.includes(filter);
+
+          // 검색어 매칭
+          const matchesQuery = !query || title.includes(query) || keywords.includes(query);
+
+          if (matchesCategory && matchesQuery) {
+            card.style.display = 'flex';
+            visibleCount++;
+          } else {
+            card.style.display = 'none';
+          }
+        });
+
+        const noResults = document.getElementById('no-results-msg');
+        if (visibleCount === 0) {
+          noResults.classList.remove('hidden');
+        } else {
+          noResults.classList.add('hidden');
+        }
+      }
+
+      // 4. 모달 창 열기/닫기 처리
+      const modal = document.getElementById('sheet-modal');
+      const modalBox = document.getElementById('sheet-modal-box');
+      const openBtn = document.getElementById('open-sheet-modal-btn');
+      const closeBtn = document.getElementById('close-sheet-modal-btn');
+      const cancelBtn = document.getElementById('cancel-sheet-modal-btn');
+      const saveBtn = document.getElementById('save-sheet-url-btn');
+      const resetBtn = document.getElementById('reset-default-sheet-btn');
+      const urlInput = document.getElementById('sheet-url-input');
+
+      function openModal() {
+        urlInput.value = localStorage.getItem(STORAGE_KEY) || (DEFAULT_SPREADSHEET_URL.includes("{{url}}") ? "" : DEFAULT_SPREADSHEET_URL);
+        modal.classList.remove('hidden');
+        requestAnimationFrame(() => {
+          modal.classList.remove('opacity-0');
+          modalBox.classList.remove('scale-95');
+          modalBox.classList.add('scale-100');
+        });
+      }
+
+      function closeModal() {
+        modal.classList.add('opacity-0');
+        modalBox.classList.remove('scale-100');
+        modalBox.classList.add('scale-95');
+        setTimeout(() => {
+          modal.classList.add('hidden');
+        }, 200);
+      }
+
+      openBtn.addEventListener('click', openModal);
+      closeBtn.addEventListener('click', closeModal);
+      cancelBtn.addEventListener('click', closeModal);
+
+      // 모달 바깥 배경 클릭 시 닫기
+      modal.addEventListener('click', (e) => {
+        if (e.target === modal) closeModal();
+      });
+
+      // 저장 버튼 클릭
+      saveBtn.addEventListener('click', async () => {
+        const inputVal = urlInput.value.trim();
+        if (inputVal) {
+          localStorage.setItem(STORAGE_KEY, inputVal);
+        } else {
+          localStorage.removeItem(STORAGE_KEY);
+        }
+        closeModal();
+        location.reload();
+      });
+
+      // 기본값 초기화 버튼
+      resetBtn.addEventListener('click', () => {
+        localStorage.removeItem(STORAGE_KEY);
+        urlInput.value = "";
+      });
+
+      // 새로고침 버튼
+      document.getElementById('refresh-sheet-btn').addEventListener('click', () => {
+        location.reload();
+      });
+    });
+  </script>
+</body>
+</html>
